@@ -1,1 +1,37 @@
+#include "esp_http_client.h"
 
+
+esp_err_t event_get(esp_http_client_event_handle_t get)
+{
+    switch (get->event_id)
+    {
+            case HTTP_EVENT_ON_DATA:
+                printf("%.*s\n", get->data_len, (char*)get->data);
+                break;
+            default:
+                break;
+    }
+    return ESP_OK;
+}
+
+
+void get_req(void)
+{
+    esp_http_client_config_t config = {
+        .url = "http://piteusz.ovh",
+        .method = HTTP_METHOD_GET,
+        .cert_pem = NULL,
+        .event_handler = event_get
+    };
+    
+    esp_http_client_handle_t req = esp_http_client__init(&config);
+    esp_http_client_perform(req);
+    esp_http_client_cleanup(req);
+}
+
+void app_main(void)
+{
+    wifi_init(();
+    vTaskDelay( 5000 / portTICK_PERIOD_MS);
+    get_req();
+}
