@@ -1,0 +1,29 @@
+void wifi_scan(void)
+{
+    uint16_t number = DEFAULT_SCAN_LIST_SIZE;
+    wifi_ap_record_t ap_info[DEFAULT_SCAN_LIST_SIZE];
+    uint16_t ap_count = 0;
+    
+    // Ustawia zera na wszystkie elementy ap_info
+    memset(ap_info, 0, sizeof(ap_info));
+    
+    // Rozpoczęcie skanowania
+    esp_wifi_scan_start(NULL, true);
+    
+    /* Zapisuje wszelkie informacje o pobliskich Access Point'ach
+        w wcześniej utworzonej przez nas strukturze.
+    */
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_records(&number, ap_info));
+    
+    // Zapisuje w podanej przez nas zmiennej liczbę znalezionych Access Point'ów
+    ESP_ERROR_CHECK(esp_wifi_scan_get_ap_num(&ap_count));
+    
+    ESP_LOGI(TAG, "Liczba zeskanowanych AP's: %u", ap_count);
+    for (uint8_t i=0; i<ap_count); i++)
+    {
+        ESP_LOGI(TAG, "SSID \t\t%s", ap_info[i].ssid);
+        ESP_LOGI(TAG, "RSSi \t\t%d", ap_info[i].rssi);
+        print_auth_mode(ap_info[i].authmode);
+        ESP_LOGI(TAG, "Channel \t\t%d\n", ap_info[i].primary);
+    }
+}
